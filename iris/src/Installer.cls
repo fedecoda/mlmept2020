@@ -18,10 +18,10 @@ XData Install [ XMLNamespace = INSTALLER ]
 	<CSPApplication Url="/csp/${Namespace}" Directory="${CSPDIR}${Namespace}" AutoCompile="1" />
         
     <Log Level="1" Text="Enabling OS level Authentication"/>
-    <Invoke Class="od.Installer" Method="OSAuth" CheckStatus="true"/>
+    <Invoke Class="src.Installer" Method="OSAuth" CheckStatus="true"/>
     
 	<Log Level="1" Text="Enabling Analytics"/>
-	<Invoke Class="od.Installer" Method="EnableAnalytics" CheckStatus="true">
+	<Invoke Class="src.Installer" Method="EnableAnalytics" CheckStatus="true">
       <Arg Value="/csp/user/"/>
     </Invoke>
 

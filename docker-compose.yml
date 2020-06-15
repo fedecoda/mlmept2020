@@ -1,9 +1,10 @@
 version: '3.6'
 services:
-    iris:
+    mlme:
+        build: iris/.
         image: mlmept2020:latest
         restart: always
-        hostname: 'iris'
+        hostname: 'mlme'
         #init: true
         ports:
             - '9091:51773'
