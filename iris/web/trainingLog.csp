@@ -4,6 +4,12 @@
 <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
+<div id="document">
+<div class="header" id="myHeader">
+	<div class="wide">
+  <h1>ML Made Easy - Advanced</h1></div>
+  <div class="narrow"><img class="right" src="intersystems.svg"/></div>
+</div> 
 <div class="markdown-body">
 <h1>Query</h1>
 <pre>SELECT substring(LOG,1,CHAR_LENGTH(LOG)) as LOG FROM INFORMATION_SCHEMA.ML_TRAINING_RUNS where UPPER(TRAINING_RUN_NAME) = UPPER('#($Get(%request.Data("trainingrun",1)))#')</pre>
@@ -14,7 +20,7 @@ SELECT substring(LOG,1,CHAR_LENGTH(LOG)) as LOG FROM INFORMATION_SCHEMA.ML_TRAIN
 <CSP:IF CONDITION="q.GetColumnCount()=1">
 <pre>
 <csp:WHILE CONDITION="q.Next()">
-#($get(q.Data(query.GetColumnName(0))))#
+#($get(q.Data(q.GetColumnName(1))))#
 </csp:WHILE>
 </pre>
 <CSP:ELSE>
@@ -27,12 +33,13 @@ SELECT substring(LOG,1,CHAR_LENGTH(LOG)) as LOG FROM INFORMATION_SCHEMA.ML_TRAIN
 <csp:WHILE CONDITION="query.Next()">
 <tr>
 <CSP:LOOP COUNTER="i" FROM="0" TO="#(query.GetColumnCount())#">
-<td>#($get(query.Data(query.GetColumnName(i))))#</td>
+<td>#($get(q.Data(q.GetColumnName(i))))#</td>
 </CSP:LOOP>
 </tr>
 </csp:WHILE>
 </table>
 </CSP:IF>
+</div>
 </div>
 </body>
 </html>

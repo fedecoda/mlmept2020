@@ -991,6 +991,7 @@
 
   #document { 
     height: 95vh;
+    width:95vw;
     display: flex;
     flex-direction: column;
     border:10px solid black;
@@ -1033,7 +1034,7 @@
   .markdown-body {
     overflow-y: scroll;
   }
-  
+
   .header .right {
     height:50px;
     margin:0;
