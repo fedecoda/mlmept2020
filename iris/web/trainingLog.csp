@@ -2,27 +2,78 @@
 <head>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="main.css">
+<style>
+pre.lines {
+  font-family: monospace;
+  background-color: #fff;
+  width: em(440);
+  margin: 4em auto;
+  padding: 0.5em;
+  border-radius: .25em;
+  box-shadow: .1em .1em .5em rgba(0,0,0,.45);
+  line-height: 0;
+  counter-reset: line;
+}
+pre.lines span {
+    display: block;
+    line-height: 1.5rem;
+}
+pre.lines span:before {
+      counter-increment: line;
+      content: counter(line);
+      display: inline-block;
+      border-right: 1px solid #ddd;
+      padding: 0 .5em;
+      margin-right: .5em;
+      color: #888;
+}
+</style>
+<title>IntegratedML : ML Made Easy - Advanced</title>
+
 </head>
 <body>
 <div id="document">
 <div class="header" id="myHeader">
 	<div class="wide">
-  <h1>ML Made Easy - Advanced</h1></div>
+  <h1><span style="color:#27318A;text-shadow: 1px 1px #ddd;">IntegratedML</span> : ML Made Easy - Advanced</h1></div>
   <div class="narrow"><img class="right" src="intersystems.svg"/></div>
 </div> 
 <div class="markdown-body">
-<h1>Query</h1>
-<pre>SELECT substring(LOG,1,CHAR_LENGTH(LOG)) as LOG FROM INFORMATION_SCHEMA.ML_TRAINING_RUNS where UPPER(TRAINING_RUN_NAME) = UPPER('#($Get(%request.Data("trainingrun",1)))#')</pre>
-<h1>Result</h1>
-<csp:SQLQUERY NAME='q' MODE='SYSTEM' P1='#($Get(%request.Data("trainingrun",1)))#'>
-SELECT substring(LOG,1,CHAR_LENGTH(LOG)) as LOG FROM INFORMATION_SCHEMA.ML_TRAINING_RUNS where UPPER(TRAINING_RUN_NAME) = UPPER(?)
-</csp:SQLQUERY>
-<CSP:IF CONDITION="q.GetColumnCount()=1">
-<pre>
-<csp:WHILE CONDITION="q.Next()">
-#($get(q.Data(q.GetColumnName(1))))#
-</csp:WHILE>
-</pre>
+  <h1>Query</h1>
+  <pre>SELECT substring(LOG,1,CHAR_LENGTH(LOG)) as LOG FROM INFORMATION_SCHEMA.ML_TRAINING_RUNS where UPPER(TRAINING_RUN_NAME) = UPPER('#($Get(%request.Data("trainingrun",1)))#')</pre>
+  <h1>Result</h1>
+  <csp:SQLQUERY NAME='query' MODE='SYSTEM' P1='#($Get(%request.Data("trainingrun",1)))#'>
+  SELECT substring(LOG,1,CHAR_LENGTH(LOG)) as LOG FROM INFORMATION_SCHEMA.ML_TRAINING_RUNS where UPPER(TRAINING_RUN_NAME) = UPPER(?)
+  </csp:SQLQUERY>
+  <CSP:IF CONDITION="query.GetColumnCount()=1">
+  <csp:WHILE CONDITION="query.Next()">
+  <pre class="lines">
+  <CSP:LOOP COUNTER="i" FROM="1" TO='#($ListLength($ListFromString($get(query.Data("LOG")),$c(10))))#'>
+<script language="Cache" runat="server">
+set line=$List($ListFromString($get(query.Data("LOG")),$c(10)),i)
+IF $DATA(^cls)=0 {
+set ^cls=##class(src.PhaseDefiner).phase(line,"")
+} ELSE {
+  set previous=^cls
+  set newvalue=##class(src.PhaseDefiner).phase(line,previous)
+
+  IF newvalue="trainingN" {
+    IF $find(previous,"training")>0 {
+      set k=k+1
+    } ELSE {
+      set k=1
+    }
+    set ^cls="training"_k
+  } ELSE {
+    set ^cls=newvalue
+  }
+}
+WRITE "<span class="""_^cls_""">"_line_"</span>",!
+</script>
+  </CSP:LOOP>
+  </pre>
+  </csp:WHILE>
+</div>
 <CSP:ELSE>
 <TABLE>
 <tr>

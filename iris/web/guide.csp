@@ -14,23 +14,22 @@ function run() {
 }
 window.onload = run;
 </script>
-<title>ML Made Easy - Advanced</title>
+<title>IntegratedML : ML Made Easy - Advanced</title>
 </head>
 <body>
 <div id="document">
 <div class="header" id="myHeader">
 	<div class="wide">
-  <h1>ML Made Easy - Advanced</h1></div>
+  <h1><span style="color:#27318A;text-shadow: 1px 1px #ddd;">IntegratedML</span> : ML Made Easy - Advanced</h1></div>
   <div class="narrow"><img class="right" src="intersystems.svg"/></div>
 </div> 
 <div id="markdown" style="display:none;">
 
+
 ## Introduction
 
 In this exercise, you will use IntegratedML to create, train, and execute a predictive model on a sample data.
-
 While the use case here is based on oversimplified case of predicting Iris flowers, IntegratedML can be used to solve all kinds of different problems with machine learning.
-
 It is intended for developers who want to implement machine learning in their applications but do not have the expertise on hand to do so.
 
 ## Objectives
@@ -50,17 +49,11 @@ By the end of this exercise, you will be able to:
 ## View Data
 
 Before you can begin to see the benefits of machine learning in an application, you first need to familiarize yourself with the data your application is receiving. 
-
-In this exercise, you will work on two separate tables:
-
-* **DataMining.IrisDataset** - This dataset contains the information of 150 different Iris flowers, with information of their petal and sepal width and length, and its sub-categorization into exact species (Iris Setosa, Iris Virginica, and Iris versicolor.
-
-* **Titanic.Passenger** - List of passengers of Titanic's only journey along with information about their survival.
+In this exercise, you will work with `DataMining.IrisDataset`. 
+This dataset contains the information of 150 different Iris flowers, with information of their petal and sepal width and length, and its sub-categorization into exact species (Iris Setosa, Iris Virginica, and Iris versicolor.
 
 Your training (input) data should be a representative sample; it needs to be representative enough to give your machine learning engine sufficient data to identify patterns and relationships. 
-
 In a real ML use cases, the training processs takes a considerable amount of time. It can take from 10-15 minutes to even couple of weeks to train, depending on the size of the dataset. For the sake of time, we have chosen small Iris flowers dataset.
-
 In this exercise, the two sets of data are already prepared for use in a machine learning application. To learn about some of the key considerations you should think about when preparing your data for machine learning, you can refer to this [infographic](https://learning.intersystems.com/course/view.php?id=1415&ssoPass=1).
 
 Run the SQL command below to view the Iris dataset table (your training data).
@@ -222,7 +215,7 @@ First let us delete the previous model:
 `DROP MODEL` statement will drop the model definition along with all trained models performed.
 We will create a new model, where we specifically define what should be used as inputs to train a model
 
-	CREATE MODEL FlowerPredictor PREDICTING(Species) 
+	CREATE MODEL FlowerPredictor PREDICTING(Species)
 		WITH (PetalLength double, PetalWidth double, SepalLength double, SepalWidth double) 
 		FROM DataMining.IrisDataset
 
@@ -309,73 +302,110 @@ In the same manner, you can use exact model you trained to make predictions, as 
 			FROM 
 				(SELECT 5 As PetalLength, 1.8 As PetalWidth, 6.1 As SepalLength, 2.9 As SepalWidth)
 
-You will notice that the both models have predicted the correct species `Iris-virginica` .
-Now try running the same query, just with ID AS 95.
-
-	SELECT PREDICT(FlowerPredictor USE FlowerPredictorV2) as PredictedSpeciesH20, 
-		PREDICT(FlowerPredictor USE FlowerPredictor2) as PredictedSpeciesAutoML 
-		FROM 
-			(SELECT 95 AS ID, 5 As PetalLength, 1.8 As PetalWidth, 6.1 As SepalLength, 2.9 As SepalWidth)
-
-What is the prediction in this case?
-The prediction has changed only because of different ID. 
-Our common sense would tell us that ID of a row should have no influence to predicting species.
-And this is correct. 
-
-AutoML providers usually rule out all unique ID-like columns before performing the training.
-However, numeric ID values could represent a proxy to time axis as often data is entered in chronological order.
-
-This means that we need to take care of what data we feed to IntegratedML. 
-Since we know ID represent no that is not the case for us, as the data was just accidentally sorted so that first 50 flowers are Iris-setosa, second 50 iris-versicolor, and last 50 iris-virginica.
-This shows the importance of feeding the IntegratedML with only relevant data.
-Let's fix this. We will create a new model, where we specially define what should be used as inputs to train a model
-
-	CREATE MODEL FlowerPredictorX PREDICTING(Species) 
-		WITH (PetalLength double, PetalWidth double, SepalLength double, SepalWidth double) 
-		FROM DataMining.IrisDataset
-
-We are using here `WITH` clause, where we directly define which columns should be considered by IntegratedML. 
-Let's train this model: 
-
-	TRAIN MODEL FlowerPredictorX
-
-Now we can check again the prediction for our new model:
-
-	SELECT PREDICT(FlowerPredictorX), 
-		FROM 
-			(SELECT 5 As PetalLength, 1.8 As PetalWidth, 6.1 As SepalLength, 2.9 As SepalWidth)
-
-Now we can see that we got a consistent prediction.
-
-Aside from using statement `SET ML CONFIGURATION` to change the IntegratedML settings, you can also use `USING` clause to train a model.
-This is shown in the example below.
-
-	TRAIN MODEL FlowerPredictorXY PREDICTING(Species) 
-		WITH (PetalLength double, PetalWidth double, SepalLength double, SepalWidth double) 
-		FROM DataMining.IrisDataset 
-		USING {'provider':'H2O'}
-
 Feel free to edit the SQL module below to experiment with the various commands you have learned for creating, training, and validating models as well as executing the PREDICT and PROBABILITY functions.
-
-
 
 ## Maintaining ML Models
 
+Once you start using IntegratedML, you will be creating many ML models, which you need to keep track of.
 
+All model definitions (created using `CREATE MODEL` statement) can be seen using the following statement:
 
-## Observing the ML training runs
+	SELECT * FROM INFORMATION_SCHEMA.ML_MODELS
 
-Let's take a look a bit deeper into the training process itself.
+If you haven't run any other commands except above mentioned, you should see only one row, defining only one model definition.
+Take a look at the result. Some columns worth mentioning are:
+
+* **MODEL_NAME** - This is the model name you choose when writing a `CREATE MODEL` statement. In our case, this is `FlowerPredictor`
+* **PREDICTING_COLUMN_NAME** - column it is predicted (`Species`)
+* **WITH_COLUMNS** - columns it should use as "inputs"
+* **DEFAULT_TRAINING_QUERY** - this is the default query IntegratedML takes from `CREATE MODEL` and uses when `TRAIN MODEL` statement does not have its own `FROM` clause
+
+When IntegratedML performs training, this process is known as a "training run", and results in "trained model".
+Let us take a look at all trained models we have so far. This is done using the following query:
+
+	SELECT * FROM INFORMATION_SCHEMA.ML_TRAINED_MODELS
+
+You should be seeing something similar like the following:
+
+<table>
+<tr>
+<th>MODEL_NAME</th><th>TRAINED_MODEL_NAME</th><th>PROVIDER</th><th>TRAINED_TIMESTAMP</th><th>MODEL_TYPE</th><th>MODEL_INFO</th>
+</tr>
+<tr>
+<td>FlowerPredictor</td><td>FlowerPredictor2</td><td>AutoML</td><td>2020-06-16 12:20:50.616</td><td>classification</td><td>ModelType:Random Forest, Package:sklearn, ProblemType:Classification</td>
+</tr>
+<tr>
+<td>FlowerPredictor</td><td>FlowerPredictorV2</td><td>H2O</td><td>2020-06-16 12:26:15.109</td><td>classification</td>
+</tr>
+</table>
+
+We can see exactly two models that we trained within our exercise.
+Notice here that TRAINED_MODEL_NAME column comes from `AS` clause of the `TRAIN MODEL` statement. 
+If it is omitted, it will automatically generate one.
+As we have trained our `FlowerPredictor` model with two different providers, we can notice this in our results as well, under `PROVIDER` column.
+`MODEL_TYPE` will show us what kind of a problem model resolves, which is in our case classification, because we try to classify species.
+`MODEL_INFO` have sometime useful information about what kind of a model is trained, like in the first row, that model being used is [*Random Forest*](https://en.wikipedia.org/wiki/Random_forest).
+
+It is often very useful to take a deeper look at the details of the training run itself. 
+The information about each training runs can be seen with a following query:
 
 	SELECT * FROM INFORMATION_SCHEMA.ML_TRAINING_RUNS
-	
-Choose the last training run name (`TRAINING_RUN_NAME`) for the FlowerPredictor Model, and enter it into the following form. 
-This small CSP script will enable you to see the TrainingRun in a pretty format.
+
+Here you can see the details about training run itself, like how long did it take (`TRAINING_DURATION`), 
+if the training is completed or not (`RUN_STATUS`) and exact log of every step it took throughout the training process (`LOG`).
+It is worth to mention that `TRAINED_MODEL_NAME` is always the same as `TRAINING_RUN_NAME`.
+
+## Observing the ML training runs (Optional)
+
+Let's take a look a bit deeper into the training process itself. As we mentioned above, each training run queries from `INFORMATION_SCHEMA.ML_TRAINING_RUNS` view.
+Since InterSystems SQL editor removes various characters, like end of line and tabs before displaying it on a screen, 
+we will use a small csp page which will show a properly formatted training run LOG.
+
+In order to have a bit more complex result having diverse types of columns, let us use another dataset.
+For this case, we will use dataset `Titanic.Passenger` which contains a list of passengers of Titanic's only journey along with information about their survival.
+With IntegratedML, we want to prognose percentage of survival based on passenger details.
+We will use internal %AutoML provider.
+
+  SET ML CONFIGURATION %AutoML
+
+Then create a model definition:
+
+	CREATE MODEL Survival PREDICTING(Survived) FROM Titanic.Passenger
+
+Now let's train the model. This time it will take a bit longer.
+
+	TRAIN MODEL Survival AS SurvivalRun
+
+We used clause `AS` intentionally, so that we can use it as `TRAINING_RUN_NAME`.
+Please enter `SurvivalRun` into the following form. It will open you another window with a complete and nicely printed LOG.
 
 <form name="trainingLog" method="get" action="trainingLog.csp" target="_blank">
 <p>Training Run: <input type="text" name="trainingrun">
 <input type="submit" value="Show Training Run" ></p>
 </form>
+
+Let's take a look at the training process. Each phase is marked with background color.
+
+1. <span class="datapreps">First, IntegratedML collects all metadata available about columns and their data types</span>
+2. <span class="featureengineering">then uses the feature engineering to modify existing features, create new ones, and remove unnecessary ones. These steps improve training speed and performance, including:</span>
+    * <span class="featureengineering">Column type classification to correctly use features in models</span>
+    * <span class="featureengineering">Feature elimination to remove redundancy and improve accuracy</span>
+    * <span class="featureengineering">One-hot encoding of categorical columns</span>
+    * <span class="featureengineering">Filling in missing or null values in incomplete datasets</span>
+    * <span class="featureengineering">Creating new columns pertaining to hours/days/months/years, wherever applicable, to generate insights in your data related to time.</span>
+3. <span class="modelselection">If a regression model is determined to be appropriate, AutoML uses a singular process for developing a regression model. For classification models, AutoML uses the following selection process to determine the most accurate model:</span>
+    * <span class="modelselection">If the dataset is too large, AutoML samples down the data to speed up the model selection process.</span>
+    * <span class="modelselection">AutoML determines if the dataset presents a binary classification problem, or if multiple classes are present, to use the proper scoring metric.</span>
+    * <span class="modelselection">Using Monte Carlo cross validation, AutoML selects the model with the best scoring metrics for training on the entire dataset.</span>
+4. <span class="training1">Notice</span><span class="training2"> how</span><span class="training3"> multiple </span><span class="training4">models</span><span class="training5"> are </span><span class="training1">getting</span><span class="training2"> trained</span><span class="training3"> and</span><span class="training4"> their</span><span class="training5"> final</span><span class="training1"> accuracy</span><span class="training2"> displayed</span><span class="training3"> at the end</span><span class="training4"> of training session</span>
+5. <span class="formatedresult">and at the end, the winning model printed in json format as a result</span>
+
+
+## Additional Material
+
+This image contains additional dataset which you can try out:
+
+* **Titanic.Passenger** - List of passengers of Titanic's only journey along with information about their survival.
 
 
 ## Summary and Additional Resources

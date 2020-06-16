@@ -23,6 +23,7 @@ COPY iris.script /tmp/iris.script
 RUN iris start IRIS \
 	&& iris session IRIS < /tmp/iris.script && \
     /bin/echo -e " do \$system.OBJ.Load(\"/home/irisowner/src/Installer.cls\",\"ck\")\n" \
+            " do \$system.OBJ.Load(\"/home/irisowner/src/PhaseDefiner.cls\",\"ck\")\n" \
             " set sc = ##class(src.Installer).Setup(, 3)\n" \
             " halt" \
     | iris session $ISC_PACKAGE_INSTANCENAME && \
