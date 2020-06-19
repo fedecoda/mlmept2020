@@ -315,10 +315,10 @@ All model definitions (created using `CREATE MODEL` statement) can be seen using
 If you haven't run any other commands except above mentioned, you should see only one row, defining only one model definition.
 Take a look at the result. Some columns worth mentioning are:
 
-* **MODEL_NAME** - This is the model name you choose when writing a `CREATE MODEL` statement. In our case, this is `FlowerPredictor`
-* **PREDICTING_COLUMN_NAME** - column it is predicted (`Species`)
-* **WITH_COLUMNS** - columns it should use as "inputs"
-* **DEFAULT_TRAINING_QUERY** - this is the default query IntegratedML takes from `CREATE MODEL` and uses when `TRAIN MODEL` statement does not have its own `FROM` clause
+* **`MODEL_NAME`** - This is the model name you choose when writing a `CREATE MODEL` statement. In our case, this is `FlowerPredictor`
+* **`PREDICTING_COLUMN_NAME`** - column it is predicted (`Species`)
+* **`WITH_COLUMNS`** - columns it should use as "inputs"
+* **`DEFAULT_TRAINING_QUERY`** - this is the default query IntegratedML takes from `CREATE MODEL` and uses when `TRAIN MODEL` statement does not have its own `FROM` clause
 
 When IntegratedML performs training, this process is known as a "training run", and results in "trained model".
 Let us take a look at all trained models we have so far. This is done using the following query:
@@ -340,7 +340,7 @@ You should be seeing something similar like the following:
 </table>
 
 We can see exactly two models that we trained within our exercise.
-Notice here that TRAINED_MODEL_NAME column comes from `AS` clause of the `TRAIN MODEL` statement. 
+Notice here that `TRAINED_MODEL_NAME` column comes from `AS` clause of the `TRAIN MODEL` statement. 
 If it is omitted, it will automatically generate one.
 As we have trained our `FlowerPredictor` model with two different providers, we can notice this in our results as well, under `PROVIDER` column.
 `MODEL_TYPE` will show us what kind of a problem model resolves, which is in our case classification, because we try to classify species.
@@ -406,6 +406,8 @@ Let's take a look at the training process. Each phase is marked with background 
 This image contains additional dataset which you can try out:
 
 * **Titanic.Passenger** - List of passengers of Titanic's only journey along with information about their survival.
+* **DataMining.IrisDataset** - instead of predicting flowers, you can try predicting for example the SepalLength based on species and other parameters. Having a number as an output to predict, IntegratedML will treat it as a regression problem and use different and regression-problem-relevant models.
+* **SQLUser.appointments** - a anonymized appointment record of one clinic. You can use this dataset to prognose the probability of patient showing to the appointment.
 
 
 ## Summary and Additional Resources
@@ -416,6 +418,7 @@ You have now completed Getting Started with IntegratedML. In this exercise, you:
 * Executed a model on set of testing data
 * Validated a model and view the results
 * Set a different ML configuration to train new models
+* View and Maintain models 
 
 To learn more about IntegratedML, visit the following learning resources:
 
