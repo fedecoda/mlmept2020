@@ -50,7 +50,7 @@ By the end of this exercise, you will be able to:
 
 Before you can begin to see the benefits of machine learning in an application, you first need to familiarize yourself with the data your application is receiving. 
 In this exercise, you will work with `DataMining.IrisDataset`. 
-This dataset contains the information of 150 different Iris flowers, with information of their petal and sepal width and length, and its sub-categorization into exact species (Iris Setosa, Iris Virginica, and Iris versicolor.
+This dataset contains the information of 150 different Iris flowers, with information of their petal and sepal width and length, and its sub-categorization into exact species (Iris Setosa, Iris Virginica, and Iris versicolor).
 
 Your training (input) data should be a representative sample; it needs to be representative enough to give your machine learning engine sufficient data to identify patterns and relationships. 
 In a real ML use cases, the training processs takes a considerable amount of time. It can take from 10-15 minutes to even couple of weeks to train, depending on the size of the dataset. For the sake of time, we have chosen small Iris flowers dataset.
@@ -110,16 +110,15 @@ To do this, a single line of SQL is required. Run the module below to create a m
 	CREATE MODEL FlowerPredictor PREDICTING(species) from DataMining.IrisDataset
 
 When you run this command in the <a href="/csp/sys/exp/%25CSP.UI.Portal.SQL.Home.zen?$NAMESPACE=USER" target="_blank">SQL editor</a> successfully, you will see  the result similar to something like the following:
-Click here to open the <a href="/csp/sys/exp/%25CSP.UI.Portal.SQL.Home.zen?$NAMESPACE=USER" target="_blank">SQL editor</a> in a new window.
 
 ![CREATEMODELSS](createmodelss.png)
 
-In the command above, you created a model definition for **FlowerPredictor** and specified that it will be predicting the **species** column from the **DataMining.IrisDataset** data set.
+Using the command above, you created a model definition for `FlowerPredictor` and specified that it will be predicting the `Species` column from the `DataMining.IrisDataset` data set.
 This command uses just the metadata about the dataset, namely the information about the columns like column type and size. The data itself is not being checked by `CREATE MODEL` statement.
 
-Next, you can run the command below to train your **FlowerPredictor** model with the data set specified in the definition.
+Next, you can run the command below to train your `FlowerPredictor` model with the data set specified in the definition.
 This statement usually takes the most of the time, but due to the fact that this dataset is small and simple, it is fast. 
-Remember, IntegratedML is learning patterns and relationships across all columns and rows in DataMining.IrisDataset.
+Remember, IntegratedML is learning patterns and relationships across all columns and rows in `DataMining.IrisDataset`.
 Click here to open the <a href="/csp/sys/exp/%25CSP.UI.Portal.SQL.Home.zen?$NAMESPACE=USER" target="_blank">SQL editor</a> in a new window.
 
 	TRAIN MODEL FlowerPredictor
@@ -128,7 +127,7 @@ When it gets finshed, only result you will see it as follows:
 
 ![TRAINMODELSS](trainmodelss.png)
 
-In this particular example, we trained the **FlowerPredictor** model without defining any specific dataset to train upon.
+In this particular example, we trained the `FlowerPredictor` model without defining any specific dataset to train upon.
 In this case, IntegratedML uses a dataset defined in `CREATE MODEL` statement.
 However, throughout the lifetime of one ML use case, you might get additional data that you can use to make your ML makes even better forecasts. 
 For that reason, `TRAIN MODEL` statement has optional, but essential, `FROM` option. This option enables you to "resume" training of your existing model.
@@ -144,7 +143,7 @@ Later in this exercise, you will modify your ML Configuration to use different p
 
 ## Execute the Model
 
-In two simple SQL commands, you have created and trained a model called FlowerPredictor that will predict the species of Iris Flower.
+In two simple SQL commands, you have created and trained a model called `FlowerPredictor` that will predict the species of Iris Flower.
 
 We can use this model to apply on new data. However, since we do not have any new data, we will be using the same dataset we used to train on.
 
@@ -155,7 +154,7 @@ Run the command below to return a table containing the original ID, the predicte
 Browse the results. You can see that the model performs perfectly. That is not always to be expected. 
 As we noticed on the first look at dataset averages, we can very easily recognize flowers as their sizes are very distinctive.
 
-To explore these results at a deeper level, you could select all rows (instead of just the top 100) and bring those results into other tool for analyzing how the model performed on your training data set. 
+To explore these results at a deeper level, you could select all rows (instead of just the top 100) and bring those results into other tool for analyzing how the model performed on your training data set.
 In the next section, you will see more options for assessing the model’s performance.
 In addition to the `PREDICT` function, you can also utilize the `PROBABILITY` function in your results. 
 
@@ -169,9 +168,7 @@ Run the command below to return a table containing the original ID, the probabil
 		Species AS ActualSpecies 
 			FROM DataMining.IrisDataset
 
-Browse the results and look at how the probabilities IntegratedML calculated compare to the predictions it made. 
-Naturally, higher probabilities tend to result in positive readmission predictions.
-However, this does not necessarily follow a strict rule (like all probabilities above 0.50 equating to a positive prediction).
+Browse the results and look at how the probabilities IntegratedML calculated compare to the predictions it made.
 
 Notice that `FOR` clause within the brackets of `PROBABILITY` function. It is used to tell IntegratedML for which label it should show probability for. 
 In case of Iris Dataset, it is the classifications '*Iris-setosa*', '*Iris-versicolor*' and '*Iris-virginica*'. 
@@ -183,14 +180,14 @@ you can use `PROBABILITY` function also without `FOR` clause. In that case, the 
 Let's try to give our FlowerPredictor custom values what our intuition would expect. 
 As we saw on a table above, `Iris-virginica` is the largest flower, so let us see newly created model will recognize it as well.
 
-	SELECT PREDICT(FlowerPredictor) as PredictedSpecies, 
+	SELECT PREDICT(FlowerPredictor) as PredictedSpecies 
 			FROM 
 				(SELECT 101 AS ID, 5 As PetalLength, 1.8 As PetalWidth, 6.1 As SepalLength, 2.9 As SepalWidth)
 
 You will notice that the model have predicted correct species `Iris-virginica`.
 Now try running the same query, just with ID AS 95.
 
-	SELECT PREDICT(FlowerPredictor) as PredictedSpecies, 
+	SELECT PREDICT(FlowerPredictor) as PredictedSpecies 
 		FROM 
 			(SELECT 95 AS ID, 5 As PetalLength, 1.8 As PetalWidth, 6.1 As SepalLength, 2.9 As SepalWidth)
 
@@ -205,7 +202,7 @@ AutoML providers usually rule out all unique ID-like columns before performing t
 However, numeric ID values could represent a proxy to time axis as often data is entered in chronological order.
 Therefore, all AutoML providers have built various mechanisms to balance this problem.
 
-This example shows clearly that we need to take care of what data we feed to IntegratedML. 
+This is a great example that we need to take care of what data we feed to IntegratedML. 
 
 Since we know ID represent no valuable information about Iris flowers, let us fix the issue.
 First let us delete the previous model:
@@ -234,7 +231,7 @@ Let's train the model again:
 
 Now we can check again the prediction for our new model:
 
-	SELECT PREDICT(FlowerPredictor), 
+	SELECT PREDICT(FlowerPredictor)
 		FROM 
 			(SELECT 5 As PetalLength, 1.8 As PetalWidth, 6.1 As SepalLength, 2.9 As SepalWidth)
 
@@ -245,13 +242,13 @@ In the next step, you will see how to validate a model in IntegratedML and see h
 
 ## Validate the Model
 
-You may have looked at your results and assessed how well the model is performing against your testing data, 
+You may have looked at your results and assessed how well the model is performing, 
 but there is more information from a machine learning perspective that you can gather about your model’s accuracy.
 Run the command below to create a validation metric for your predictive model based on your training data set.
 
 	VALIDATE MODEL FlowerPredictor FROM DataMining.IrisDataset
 
-Then, run the command below to view the data in the `%ML.ValidationMetric table`, which contains the results of your model validation.
+Then, run the command below to view the data in the `%ML.ValidationMetric` table, which contains the results of your model validation.
 
 	SELECT * FROM %ML.ValidationMetric
 
@@ -302,17 +299,29 @@ In the same manner, you can use exact model you trained to make predictions, as 
 			FROM 
 				(SELECT 5 As PetalLength, 1.8 As PetalWidth, 6.1 As SepalLength, 2.9 As SepalWidth)
 
-Feel free to edit the SQL module below to experiment with the various commands you have learned for creating, training, and validating models as well as executing the PREDICT and PROBABILITY functions.
+Feel free to edit the SQL statement above to experiment with the various commands you have learned for creating, training, and validating models as well as executing the PREDICT and PROBABILITY functions.
 
 ## Maintaining ML Models
 
-Once you start using IntegratedML, you will be creating many ML models, which you need to keep track of.
+Before we continue, let us take a look at the IntegratedML workflow. 
+When we do the `CREATE MODEL` statement, we define the problem we want ML to solve. 
+This is considered as a model definition. `TRAIN MODEL` statement will initiate the *TRAINING RUN* and result in *TRAINED MODEL*.
+During the *TRAINING RUN*, IntegratedML will generate a detailed information of how the training has been performed.
+
+![IMLWorkflow](IMLworkflow.png)
+
+Once we have a trained model, every time we want to validate it against new dataset, we do a *VALIDATION RUN*. 
+When the *VALIDATION RUN* is finished, it will result in *VALIDATION METRIC*, which you can query to see how well did the model performed.
+
+These are the terms we need to keep in mind when browsing and Maintaining ML Models.
+
+As you can expect, once you start using IntegratedML, you will be creating many ML models, which you need to keep track of.
 
 All model definitions (created using `CREATE MODEL` statement) can be seen using the following statement:
 
 	SELECT * FROM INFORMATION_SCHEMA.ML_MODELS
 
-If you haven't run any other commands except above mentioned, you should see only one row, defining only one model definition.
+If you haven't run any other SQL statements except above mentioned, you should see only one row, defining only one model definition.
 Take a look at the result. Some columns worth mentioning are:
 
 * **`MODEL_NAME`** - This is the model name you choose when writing a `CREATE MODEL` statement. In our case, this is `FlowerPredictor`
@@ -320,7 +329,7 @@ Take a look at the result. Some columns worth mentioning are:
 * **`WITH_COLUMNS`** - columns it should use as "inputs"
 * **`DEFAULT_TRAINING_QUERY`** - this is the default query IntegratedML takes from `CREATE MODEL` and uses when `TRAIN MODEL` statement does not have its own `FROM` clause
 
-When IntegratedML performs training, this process is known as a "training run", and results in "trained model".
+As we mentioned before, when IntegratedML performs training, this process is known as a "training run", and results in "trained model".
 Let us take a look at all trained models we have so far. This is done using the following query:
 
 	SELECT * FROM INFORMATION_SCHEMA.ML_TRAINED_MODELS
@@ -357,7 +366,8 @@ It is worth to mention that `TRAINED_MODEL_NAME` is always the same as `TRAINING
 
 ## Observing the ML training runs (Optional)
 
-Let's take a look a bit deeper into the training process itself. As we mentioned above, each training run queries from `INFORMATION_SCHEMA.ML_TRAINING_RUNS` view.
+Let's take a look a bit deeper into the training process itself. 
+As we mentioned above, each training run queries from `INFORMATION_SCHEMA.ML_TRAINING_RUNS` view.
 Since InterSystems SQL editor removes various characters, like end of line and tabs before displaying it on a screen, 
 we will use a small csp page which will show a properly formatted training run LOG.
 
@@ -366,7 +376,7 @@ For this case, we will use dataset `Titanic.Passenger` which contains a list of 
 With IntegratedML, we want to prognose percentage of survival based on passenger details.
 We will use internal %AutoML provider.
 
-  SET ML CONFIGURATION %AutoML
+	SET ML CONFIGURATION %AutoML
 
 Then create a model definition:
 
@@ -405,9 +415,9 @@ Let's take a look at the training process. Each phase is marked with background 
 
 This image contains additional dataset which you can try out:
 
-* **Titanic.Passenger** - List of passengers of Titanic's only journey along with information about their survival.
-* **DataMining.IrisDataset** - instead of predicting flowers, you can try predicting for example the SepalLength based on species and other parameters. Having a number as an output to predict, IntegratedML will treat it as a regression problem and use different and regression-problem-relevant models.
-* **SQLUser.appointments** - a anonymized appointment record of one clinic. You can use this dataset to prognose the probability of patient showing to the appointment.
+* `Titanic.Passenger` - List of passengers of Titanic's only journey along with information about their survival.
+* `DataMining.IrisDataset` - instead of predicting flowers, you can try predicting for example the `SepalLength` based on species and other parameters. Having a number as an output to predict, IntegratedML will treat it as a regression problem and use different and regression-problem-relevant models.
+* `SQLUser.appointments` - a anonymized appointment record of one clinic. You can use this dataset to prognose the probability of patient showing to the appointment.
 
 
 ## Summary and Additional Resources
@@ -422,7 +432,7 @@ You have now completed Getting Started with IntegratedML. In this exercise, you:
 
 To learn more about IntegratedML, visit the following learning resources:
 
-* [Learn IntegratedML in InterSystems IRIS® - resource guide](https://learning.intersystems.com/course/view.php?id=1346&ssoPass=1)
+* [Learn IntegratedML in InterSystems IRIS - resource guide](https://learning.intersystems.com/course/view.php?id=1346&ssoPass=1)
 * [Using IntegratedML - Documentation](https://docs.intersystems.com/iris20202/csp/docbook/Doc.View.cls?KEY=GIML)
 
 
