@@ -1,4 +1,4 @@
-ARG IMAGE=docker.iscinternal.com/intersystems/iris:2020.3.0AA.335.0
+ARG IMAGE=store/intersystems/iris-aa-community:2020.3.0AA.331.0
 FROM ${IMAGE}
 
 USER root
@@ -8,7 +8,7 @@ RUN mkdir /data \
 
 ENV SRC_DIR=/home/irisowner
 
-COPY --chown=irisowner ./iris.key /usr/irissys/mgr/iris.key
+#COPY --chown=irisowner ./iris.key /usr/irissys/mgr/iris.key
 
 COPY --chown=irisowner ./src/ $SRC_DIR/src
 COPY --chown=irisuser ./web /usr/irissys/csp/user
