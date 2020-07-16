@@ -3,6 +3,8 @@
 Machine Learning Made Easy - Advanced Exercise
 This image is a little introduction into IntegratedML and its possibilities. It guides you through all options and configurations.
 
+The text mainly uses the content from InterSystems Documentation (special thanks to Derek Robinson).
+
 ## Installation
 
 To build the image, you need to 
