@@ -7,11 +7,11 @@ This image is a little introduction into IntegratedML and its possibilities. It 
 
 To build the image, you need to 
 
-  docker-compose build
+    docker-compose build
   
 to run it:
 
-  docker-compose up -d
+    docker-compose up -d
 
 Once it is up, you can run it with the following link:
 
